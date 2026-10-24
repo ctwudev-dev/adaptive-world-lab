@@ -1,4 +1,5 @@
 import {DEFAULTS,GRID,METHODS,PRESETS,OBJECT_RADIUS,scenario,publicConfig,runEpisode,beliefStats,prior,dist} from './robot-engine.js';
+import {initCalibration} from './calibration.js';
 
 const $=id=>document.getElementById(id);
 const LABELS={fixed:'Fixed model',passive:'Passive learning',active:'Active learning'};
@@ -7,12 +8,12 @@ const NOTES={fixed:'Use the same physics belief for every move. No model update.
   active:'Also consider an information bonus. A learning move must use the same time and move budget.'};
 const COLORS={fixed:'#9cadc1',passive:'#83b9ef',active:'#9ee7d7'};
 let config=scenario('change'),runs=null,method='active',completed=0,playing=false,frame=null,progress=0,source='live',lastTick=0;
-let worker=null,comparison=null,request=0,loadingReplay=false;
+let worker=null,comparison=null,request=0,loadingReplay=false,calibrationPrior=null;
 const reducedMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches??false;
 function setError(message=''){$('robot-input-error').textContent=message;$('robot-input-error').hidden=!message;}
 function readConfig(){
   if($('robot-seed').value.trim()==='')throw Error('Enter a whole-number seed.');
-  return scenario($('robot-case').value,{seed:Number($('robot-seed').value)});
+  return scenario($('robot-case').value,{seed:Number($('robot-seed').value),...(calibrationPrior??{})});
 }
 function stop(){playing=false;if(frame!==null)cancelAnimationFrame(frame);frame=null;progress=0;lastTick=0;$('robot-play').innerHTML='<span aria-hidden="true">▶</span> Run experiment';}
 function ensureRuns(){
@@ -22,7 +23,7 @@ function ensureRuns(){
 function invalidate(){
   stop();request++;completed=0;runs=null;source='live';loadingReplay=false;$('robot-load-contact').disabled=false;
   try{config=readConfig();ensureRuns();setError();}catch(error){setError(error.message);}
-  $('robot-case-note').textContent=PRESETS[$('robot-case').value].note;render();
+  $('robot-case-note').textContent=PRESETS[$('robot-case').value].note+(calibrationPrior?' Fitted prior means from Calibrate are applied. Selected uncertainty widths stay unchanged.':'');render();
 }
 function current(){return runs?.[method];}
 function animationPoint(event,t){
@@ -182,7 +183,7 @@ $('robot-play').addEventListener('click',()=>{
 });
 $('robot-step').addEventListener('click',()=>{try{ensureRuns();setError();stop();if(completed<current().events.length)finishMove();}catch(error){setError(error.message);render();}});
 $('robot-reset').addEventListener('click',()=>{stop();completed=0;try{readConfig();setError();}catch(error){setError(error.message);}render();});
-$('robot-case').addEventListener('change',invalidate);$('robot-seed').addEventListener('input',invalidate);
+$('robot-case').addEventListener('change',()=>{calibrationPrior=null;invalidate();});$('robot-seed').addEventListener('input',()=>{calibrationPrior=null;invalidate();});
 $('robot-strategy').addEventListener('change',()=>{stop();method=$('robot-strategy').value;completed=0;render();});
 $('robot-truth').addEventListener('change',render);
 function download(name,data){const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
@@ -204,7 +205,7 @@ $('robot-load-contact').addEventListener('click',async()=>{
   }catch(error){if(token===request)setError(error.message);}finally{if(token===request){loadingReplay=false;$('robot-load-contact').disabled=false;render();}}
 });
 function showRoute(){
-  const name=['experiment','compare','method'].includes(location.hash.slice(1))?location.hash.slice(1):'experiment';
+  const name=['experiment','calibrate','compare','method'].includes(location.hash.slice(1))?location.hash.slice(1):'experiment';
   for(const el of document.querySelectorAll('.page'))el.hidden=el.id!==name+'-page';
   for(const el of document.querySelectorAll('[data-route]')){const selected=el.dataset.route===name;el.classList.toggle('selected',selected);if(selected)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');}
   if(name!=='experiment')stop();else requestAnimationFrame(render);
@@ -246,4 +247,5 @@ $('robot-compare-run').addEventListener('click',()=>{
 function comparisonFailed(message){worker?.terminate();worker=null;comparisonBusy(false);$('robot-compare-progress').textContent=message;}
 $('robot-compare-cancel').addEventListener('click',()=>comparisonFailed('Batch cancelled. Any earlier completed results remain available.'));
 $('robot-compare-export').addEventListener('click',()=>{if(comparison)download('robot-physics-'+comparison.suite+'.json',comparison);});
+initCalibration({onApply:parameters=>{calibrationPrior={priorMu:parameters.mu,priorMass:parameters.mass};invalidate();}});
 invalidate();showRoute();

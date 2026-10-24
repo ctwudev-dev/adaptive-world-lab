@@ -1,0 +1,228 @@
+{
+  "schema": "robot-physics-calibration-v1",
+  "algorithmVersion": "1.0.0",
+  "source": "synthetic-mujoco",
+  "assumptions": {
+    "startAtRest": true,
+    "calibratedConstantMotorForce": true,
+    "centeredRadialContact": true,
+    "oneObjectAndSurface": true,
+    "pusherMassKg": 0.06
+  },
+  "baseline": {
+    "mu": 0.26,
+    "mass": 0.75
+  },
+  "parameters": {
+    "mu": 0.35234375000000007,
+    "mass": 1.0773437499999998
+  },
+  "before": {
+    "calibration": {
+      "trials": 8,
+      "rmse": 0.10072541706656675,
+      "meanEndError": 0.17451639921483064,
+      "worstTrialRmse": 0.16039575437447476,
+      "lateralRmse": 0.001983298220093117
+    },
+    "validation": {
+      "trials": 8,
+      "rmse": 0.11132395425942768,
+      "meanEndError": 0.18508184510547204,
+      "worstTrialRmse": 0.2531442815087804,
+      "lateralRmse": 0.002206996812193721
+    }
+  },
+  "after": {
+    "calibration": {
+      "trials": 8,
+      "rmse": 0.0031691816781677135,
+      "meanEndError": 0.002588187575477438,
+      "worstTrialRmse": 0.004679238836418503,
+      "lateralRmse": 0.001983298220093117
+    },
+    "validation": {
+      "trials": 8,
+      "rmse": 0.0032086696572731603,
+      "meanEndError": 0.002866047168920627,
+      "worstTrialRmse": 0.004542844118332722,
+      "lateralRmse": 0.002206996812193721
+    }
+  },
+  "diagnostics": [],
+  "identification": {
+    "condition": 19.680577166514116,
+    "minimumSensitivity": 0.012730945053425823,
+    "motionRms": 0.0918173529202919,
+    "identifiable": true
+  },
+  "validation": {
+    "improved": true,
+    "absoluteReduction": 0.10811528460215451,
+    "relativeReduction": 0.9711771857313322,
+    "trialsImproved": 8,
+    "reportingThreshold": "Reduction greater than 0.5 mm and 1% of baseline error; not a significance test."
+  },
+  "search": {
+    "evaluations": 571,
+    "calibrationTrials": 8,
+    "validationTrials": 8,
+    "validationUsedForFit": false
+  },
+  "trials": [
+    {
+      "id": "trial-001",
+      "split": "calibration",
+      "samples": 15,
+      "beforeRmse": 0.018795519414470864,
+      "afterRmse": 0.002406972737267453,
+      "beforeEndError": 0.037678422959615286,
+      "afterEndError": 0.0038512575742402303
+    },
+    {
+      "id": "trial-002",
+      "split": "calibration",
+      "samples": 31,
+      "beforeRmse": 0.1057913479795131,
+      "afterRmse": 0.0021612547094220437,
+      "beforeEndError": 0.21569828462778304,
+      "afterEndError": 0.0019827845755728086
+    },
+    {
+      "id": "trial-003",
+      "split": "calibration",
+      "samples": 30,
+      "beforeRmse": 0.10946902363370564,
+      "afterRmse": 0.004250287226204414,
+      "beforeEndError": 0.22143881321504627,
+      "afterEndError": 0.004433146042483804
+    },
+    {
+      "id": "trial-004",
+      "split": "calibration",
+      "samples": 28,
+      "beforeRmse": 0.09707153844156695,
+      "afterRmse": 0.0023888191086004797,
+      "beforeEndError": 0.1899571010377658,
+      "afterEndError": 0.0007958613628058537
+    },
+    {
+      "id": "trial-005",
+      "split": "calibration",
+      "samples": 20,
+      "beforeRmse": 0.03568229932660441,
+      "afterRmse": 0.0021551180522162675,
+      "beforeEndError": 0.06684226457019488,
+      "afterEndError": 0.0028550325975011596
+    },
+    {
+      "id": "trial-006",
+      "split": "calibration",
+      "samples": 16,
+      "beforeRmse": 0.021282213274613285,
+      "afterRmse": 0.004679238836418503,
+      "beforeEndError": 0.044577668285412306,
+      "afterEndError": 0.0042458374688097815
+    },
+    {
+      "id": "trial-007",
+      "split": "calibration",
+      "samples": 35,
+      "beforeRmse": 0.14408500431794619,
+      "afterRmse": 0.0031128879094540346,
+      "beforeEndError": 0.29253636502509134,
+      "afterEndError": 0.0008984020403859928
+    },
+    {
+      "id": "trial-008",
+      "split": "calibration",
+      "samples": 35,
+      "beforeRmse": 0.16039575437447476,
+      "afterRmse": 0.003143864041909531,
+      "beforeEndError": 0.32740227399773614,
+      "afterEndError": 0.0016431789420198756
+    },
+    {
+      "id": "trial-009",
+      "split": "validation",
+      "samples": 25,
+      "beforeRmse": 0.06559509300624064,
+      "afterRmse": 0.0022209351508959484,
+      "beforeEndError": 0.13303463068607235,
+      "afterEndError": 0.003387033010691074
+    },
+    {
+      "id": "trial-010",
+      "split": "validation",
+      "samples": 23,
+      "beforeRmse": 0.05525465110852704,
+      "afterRmse": 0.00328355479830086,
+      "beforeEndError": 0.11374808611576859,
+      "afterEndError": 0.0022569685062603334
+    },
+    {
+      "id": "trial-011",
+      "split": "validation",
+      "samples": 19,
+      "beforeRmse": 0.03805964557618552,
+      "afterRmse": 0.0022595183723645366,
+      "beforeEndError": 0.0777804153017626,
+      "afterEndError": 0.0012980532800018214
+    },
+    {
+      "id": "trial-012",
+      "split": "validation",
+      "samples": 43,
+      "beforeRmse": 0.2531442815087804,
+      "afterRmse": 0.0033560569413484003,
+      "beforeEndError": 0.5109495640935134,
+      "afterEndError": 0.0057143162027540415
+    },
+    {
+      "id": "trial-013",
+      "split": "validation",
+      "samples": 29,
+      "beforeRmse": 0.08933164259841525,
+      "afterRmse": 0.002656316165448114,
+      "beforeEndError": 0.1855465468338275,
+      "afterEndError": 0.004548196679544587
+    },
+    {
+      "id": "trial-014",
+      "split": "validation",
+      "samples": 29,
+      "beforeRmse": 0.09737672042677219,
+      "afterRmse": 0.003584715265579695,
+      "beforeEndError": 0.1956677086456864,
+      "afterEndError": 0.0017255208737084263
+    },
+    {
+      "id": "trial-015",
+      "split": "validation",
+      "samples": 26,
+      "beforeRmse": 0.08051593176772395,
+      "afterRmse": 0.0031205815868066825,
+      "beforeEndError": 0.16425499065715685,
+      "afterEndError": 0.0011995327718805758
+    },
+    {
+      "id": "trial-016",
+      "split": "validation",
+      "samples": 21,
+      "beforeRmse": 0.04808994114373331,
+      "afterRmse": 0.004542844118332722,
+      "beforeEndError": 0.09967281850998863,
+      "afterEndError": 0.0027987560265241543
+    }
+  ],
+  "realWorldVerified": false,
+  "deploymentApproved": false,
+  "kind": "matched",
+  "provenance": {
+    "inputSha256": "9f56ad685ea859768bae5f5aa259603773d171ec21696d113a5039f3074ad695",
+    "codeHashes": {
+      "dist/calibration-engine.js": "cf80e4b9e13b1c59295b4ad24e99b86d958821de4a9c98c1b090165c8d51cb7f",
+      "scripts/calibration_report.mjs": "6a6b06b97840689ead32fa975e97c454e3c3dddb0630b061bc014e23a344fb80"
+    }
+  }
+}

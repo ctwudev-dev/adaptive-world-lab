@@ -33,7 +33,7 @@ for filename in ("index.html", "transfer.html"):
         if parts.scheme or not parts.path:
             continue
         assert (DIST/parts.path).is_file(),f"Missing linked asset {link} in {filename}"
-for script_name,filename in (("app.js","transfer.html"),("business.js","transfer.html"),("robot.js","index.html")):
+for script_name,filename in (("app.js","transfer.html"),("business.js","transfer.html"),("robot.js","index.html"),("calibration.js","index.html")):
     for element in set(re.findall(r"(?<!\$)\$\('([^']+)'\)", (DIST/script_name).read_text())):
         assert element in pages[filename].ids,f"Unknown DOM id {element} in {script_name}"
 for name in ("engine.js","app.js","business.js","business-case.js","benchmark-worker.js","style.css","mujoco-demo.json","README.md","proposal.md","transfer-pilot-proposal.pdf","business-case-sample.json","adaptive-world-lab.zip"):
@@ -42,6 +42,38 @@ assert (DIST/"README.md").read_bytes()==(ROOT/"README.md").read_bytes()
 for name in ("robot-engine.js","robot-experiment.js","robot-worker.js","robot.js","robot.css","robot-contact-demo.json","robot-method.md","robot-results.md","transfer.html"):
     assert (DIST/name).is_file(),name
 assert (DIST/"robot-method.md").read_bytes()==(ROOT/"docs/robot-method.md").read_bytes()
+for name in ("calibration.js","calibration-engine.js","calibration-worker.js","calibration-template.csv","calibration-method.md","calibration-results.md"):
+    assert (DIST/name).is_file(),name
+for name in ("calibration-method.md","calibration-results.md"):
+    assert (DIST/name).read_bytes()==(ROOT/"docs"/name).read_bytes()
+for kind in ("matched","drift","quiet"):
+    capture_path=DIST/f"calibration-{kind}.json"
+    capture=json.loads(capture_path.read_text())
+    report=json.loads((ROOT/f"results/calibration-{kind}.json").read_text())
+    assert capture["schema"]=="robot-physics-capture-v1" and capture["source"]=="synthetic-mujoco"
+    assert capture["provenance"]["physicalMeasurements"] is False
+    assert (DIST/f"calibration-{kind}.csv").is_file()
+    for record in (capture,report):
+        for name,expected in record["provenance"]["codeHashes"].items():
+            assert hashlib.sha256((ROOT/name).read_bytes()).hexdigest()==expected,f"Stale calibration source: {name}"
+    assert report["provenance"]["inputSha256"]==hashlib.sha256(capture_path.read_bytes()).hexdigest()
+    assert report["schema"]=="robot-physics-calibration-v1" and report["source"]=="synthetic-mujoco"
+    assert report["realWorldVerified"] is False and report["deploymentApproved"] is False
+    assert report["search"]["validationUsedForFit"] is False
+    assert report["search"]["calibrationTrials"]==report["search"]["validationTrials"]==8
+    trials=capture["dataset"]["trials"]
+    assert len(trials)==len(report["trials"])==16
+    for split in ("calibration","validation"):
+        assert len([t for t in trials if t["split"]==split])==8
+        for side in ("before","after"):
+            expected=math.sqrt(sum(t[side+"Rmse"]**2 for t in report["trials"] if t["split"]==split)/8)
+            assert math.isclose(report[side][split]["rmse"],expected,abs_tol=1e-10)
+    if kind=="matched":
+        assert report["after"]["validation"]["rmse"]<.006 and report["validation"]["improved"]
+    elif kind=="drift":
+        assert not report["validation"]["improved"] and report["after"]["validation"]["rmse"]>report["before"]["validation"]["rmse"]
+    else:
+        assert not report["identification"]["identifiable"]
 robot_count=0
 for suite in ("unseen","shift","close"):
     records=[]
@@ -109,5 +141,5 @@ with ZipFile(DIST/"adaptive-world-lab.zip") as z:
         assert not name.endswith(".zip")
     for name in ("README.md","awm/core.py","awm/plants.py","dist/index.html","tests/test_core.py","package-lock.json","awm/robot_contact.py","dist/robot-engine.js","dist/transfer.html"):
         assert "adaptive-world-lab/"+name in names,name
-print(f"Release integrity verified: {sum(len(p.ids) for p in pages.values())} DOM ids, {robot_count} new robot trials, 1,200 earlier MuJoCo trials, {len(names)} portable source files.")
+print(f"Release integrity verified: {sum(len(p.ids) for p in pages.values())} DOM ids, 48 calibration trials, {robot_count} retained robot trials, 1,200 earlier MuJoCo trials, {len(names)} portable source files.")
 

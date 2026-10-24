@@ -12,6 +12,8 @@ Excluded from the repository and source archive:
 
 The browser demo runs its calculations locally. It does not use cloud inference, analytics, or external fonts. Recorded simulation files are fetched from the same site. Exports are created locally. The new robot interface does not request a camera, microphone, location, or hardware connection.
 
+Calibration CSV files stay in the browser session. Original trial labels are replaced during parsing, and file names are not added to reports. No imported measurements are copied to the repository or hosted examples. Report exports omit raw positions; the separate track export retains motion data with new labels. Replacing labels does not make the motion data itself anonymous.
+
 Entered business assumptions also stay in the browser. The business-case JSON is a local export, not a submission for approval or an upload to a company system. The PDF uses a generic project author and contains no personal contact information.
 
 Experiment files contain simulation settings, results, random seeds, software versions, and source hashes. They do not contain user recordings or personal data.
