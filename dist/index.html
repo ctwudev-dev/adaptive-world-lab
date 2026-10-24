@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0d1116">
+<meta name="description" content="A small physics demo that learns how slippery a surface is. Compare fixed models, learning during the task, active probes, and robust planning.">
+<title>Adaptive World Lab — Learn from each move</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230d1116'/%3E%3Cpath d='M15 47 32 14l17 33M23 33h18' fill='none' stroke='%23ffb068' stroke-width='5'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="#lab" aria-label="Adaptive World Lab home"><span class="brand-mark">Λ<span></span></span><span>ADAPTIVE<span class="brand-sub">WORLD LAB</span></span></a>
+<nav aria-label="Main navigation"><button class="nav-link selected" data-view="lab">Lab</button><button class="nav-link" data-view="benchmark">Compare strategies</button><button class="nav-link" data-view="method">How it works <span>↗</span></button></nav>
+<div class="version"><span class="live-dot"></span>RESEARCH PROTOTYPE <span class="v-tag">v1.0</span></div></header>
+<main>
+<section id="lab-view" class="view">
+<div class="intro"><div><p class="eyebrow"><span class="mini-line"></span> LEARNING THROUGH ACTION <span class="muted">/</span> EXPERIMENT 001</p><h1>The world changes.<span>The model can learn.</span></h1><p class="lead">Slide a box on an unknown surface. Watch the model learn<br class="desktop-break">from each move, then use that knowledge to reach the target.</p></div><div class="intro-aside"><span class="outline-cube">◇</span><span>OBSERVE → EXPERIMENT → ADAPT</span><p>A model that can check and revise its own assumptions.</p></div></div>
+<div class="workspace">
+<aside class="controls panel">
+<div class="panel-heading"><span class="section-num">01</span><h2>Set the world</h2><span class="tiny-chip">HIDDEN TO AGENT</span></div>
+<label class="field-label" for="preset">Test case</label><select id="preset"><option value="slick">A slippery unknown surface</option><option value="moderate">A probe may not pay off</option><option value="matched">The model starts right</option><option value="rough">A rough surface</option><option value="shift">Friction changes after one move</option><option value="drag">Extra drag the model cannot see</option></select>
+<div class="scenario-note" id="scenario-note">The surface is more slippery than expected. A fast release may cross the boundary.</div>
+<div class="slider-field"><label for="mu">True friction <span class="lock-icon" title="Held only by the world and evaluator">◇</span><output id="mu-value">0.10</output></label><input id="mu" type="range" min="0.08" max="0.8" step="0.01" value="0.10"><div class="range-labels"><span>Slippery 0.08</span><span>Rough 0.80</span></div></div>
+<div class="slider-field"><label for="prior">Starting estimate<output id="prior-value">0.44</output></label><input id="prior" type="range" min="0.08" max="0.8" step="0.01" value="0.44"><div class="range-labels"><span>Starting standard deviation</span><span>0.16</span></div></div>
+<div class="slider-field"><label for="noise">Position noise<output id="noise-value">3 mm</output></label><input id="noise" type="range" min="0" max="12" step="1" value="3"></div>
+<div class="seed-row"><label for="seed">Random seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" value="42"><button id="new-seed" class="icon-button" aria-label="Use a new random seed" title="New seed">⤨</button></div>
+<button id="run" class="button primary"><span class="play-icon">▶</span><span>Start experiment</span><kbd>↵</kbd></button>
+<div class="secondary-actions"><button id="step" class="button subtle">Step <span>→</span></button><button id="reset" class="icon-button" title="Reset playback" aria-label="Reset playback">↺</button></div>
+<div class="divider"></div><div class="task-spec"><span>Task settings</span><dl><dt>Target center</dt><dd>1.65 m</dd><dt>Allowed error</dt><dd>± 6 cm</dd><dt>Move limit</dt><dd>6 moves</dd><dt>Max release speed</dt><dd>2.30 m/s</dd></dl></div>
+<div class="controller-note"><span>↳</span><p>The controller only reads sensors.<br>True values are kept for scoring.</p></div>
+</aside>
+<div class="experiment">
+<div class="scene-panel panel"><div class="scene-toolbar"><div><span class="status-dot"></span><span id="scene-status">Ready to start</span></div><div class="scene-tools"><label class="toggle"><input id="reveal" type="checkbox"><span></span>Show true values</label><button id="speed" class="small-button" title="Change playback speed">1×</button></div></div>
+<div class="strategy-tabs" role="tablist" aria-label="Control strategy"><button role="tab" aria-selected="false" data-method="fixed"><i class="method-dot fixed"></i>Fixed model</button><button role="tab" aria-selected="false" data-method="passive"><i class="method-dot passive"></i>Passive adaptation</button><button role="tab" aria-selected="true" class="selected" data-method="active"><i class="method-dot active"></i>Active adaptation</button><button role="tab" aria-selected="false" data-method="robust"><i class="method-dot robust"></i>Robust planning</button></div>
+<div class="canvas-wrap"><canvas id="world" aria-label="A box sliding on a table with its predicted stopping range"></canvas><div class="canvas-caption"><span class="coord-label">TOP VIEW <span>·</span> 1D CALIBRATED GLIDE</span><span id="engine-badge">Numerical physics · live</span></div><div class="scene-message" id="scene-message"><span class="message-dot"></span><span>Observe, then decide whether a probe would help.</span></div></div>
+<div class="legend"><span><i class="legend-square"></i>Box</span><span><i class="legend-dash"></i>Predicted stop</span><span><i class="legend-zone"></i>95% parameter range</span><span><i class="legend-target"></i>Target</span></div>
+<div class="metrics-row"><div><span>Moves</span><strong id="metric-actions">0 <small>/ 6</small></strong></div><div><span>Friction estimate μ̂</span><strong id="metric-mu">0.440</strong></div><div><span>95% belief interval</span><strong id="metric-ci" class="small-value">0.143 – 0.737</strong></div><div><span>Distance to target</span><strong id="metric-error">127.0 <small>cm</small></strong></div></div></div>
+<div class="insights-grid">
+<section class="belief-panel panel"><div class="panel-heading"><span class="section-num">02</span><h2>What the model believes</h2><span class="chart-unit">p(μ | D)</span></div><div class="plot-legend"><span><i class="prior-dot"></i>Starting belief</span><span><i class="posterior-dot"></i>Current belief</span></div><canvas id="belief" aria-label="Starting and updated probabilities for friction values"></canvas><div class="belief-footer"><span id="belief-detail">No observations yet. Several friction values are still possible.</span><span id="uncertainty" class="tiny-chip">σ = 0.151</span></div></section>
+<section class="log-panel panel"><div class="panel-heading"><span class="section-num">03</span><h2>Observe and update</h2><span class="chart-unit">DECISION LOG</span></div><div id="event-log" aria-live="polite"><div class="empty-log"><span>⌁</span><p>Each move is a small physics experiment.</p><small>Predictions, observations, and model updates appear here.</small></div></div></section></div>
+<div class="lab-footer"><span><i class="live-dot"></i> Runs in your browser · No GPU needed</span><div><button id="mujoco-load" class="text-button">Load MuJoCo recording ↗</button><button id="export-session" class="text-button">Export JSON ↓</button></div></div>
+</div></div>
+<section class="result-strip panel" id="single-results"><div class="result-intro"><span class="eyebrow">SAME WORLD, FOUR STRATEGIES</span><h2>One surface. Four approaches.</h2><p>Results include every move and the cost of probes.</p></div><div id="result-cards" class="result-cards"></div></section>
+<div class="scope-note"><span>Scope</span><p>A controlled 1D sliding experiment. Each action sets a known release speed. This version has no robot arm, camera tracking, or real-world robot tests.</p></div>
+</section>
+<section id="benchmark-view" class="view" hidden>
+<div class="intro benchmark-intro"><div><p class="eyebrow"><span class="mini-line"></span> REPEATABLE TESTS</p><h1>Run the tests.<span>Check the trade-offs.</span></h1><p class="lead">Use the same cases, sensor noise, and move limit.<br>Compare success with the cost of learning.</p></div><span class="large-index">04</span></div>
+<div class="benchmark-controls panel"><div><label for="suite">Test set</label><select id="suite"><option value="uniform">Unknown fixed friction</option><option value="shift">Friction changes after one move</option><option value="mismatch">Extra drag</option></select></div><div><label for="sample-count">Runs per strategy</label><select id="sample-count"><option value="40">40</option><option value="100" selected>100</option><option value="200">200</option></select></div><div><label for="bench-seed">Test seed</label><input id="bench-seed" type="number" min="0" max="4294967295" value="2026"></div><button id="run-benchmark" class="button primary">Run comparison <span>↗</span></button><button id="cancel-benchmark" class="button subtle" hidden>Cancel</button></div>
+<div class="benchmark-progress" id="benchmark-progress" hidden><span id="progress-label"></span><progress id="progress" max="100" value="0"></progress></div>
+<div class="verified-actions"><span>Check against a second physics engine</span><button id="load-verified" class="text-button">Load saved MuJoCo results ↗</button></div>
+<div id="benchmark-empty" class="bench-empty panel"><span>∑</span><h2>Compare before drawing a conclusion.</h2><p>A new comparison calculates fresh results.<br>You can also inspect the saved MuJoCo runs.</p></div>
+<div id="benchmark-results" hidden><div class="evaluation-meta"><span id="bench-meta"></span><button id="export-csv" class="text-button">Export paired CSV ↓</button></div><div class="benchmark-chart panel"><div class="panel-heading"><h2>Success rate and 95% Wilson interval</h2><span class="chart-unit">HIGHER IS BETTER</span></div><div id="benchmark-bars"></div></div><div class="table-panel panel"><table><thead><tr><th>Strategy</th><th>Success</th><th>Mean moves</th><th>Mean probes</th><th>Mean time</th><th>Position error</th><th>Out of bounds</th><th>Input energy</th></tr></thead><tbody id="benchmark-table"></tbody></table></div><div class="findings-panel panel"><span class="eyebrow">WHAT THE DATA SAYS</span><h2 id="finding-title"></h2><p id="finding-text"></p></div></div>
+<div class="evaluation-notes"><div><span>Shared cases</span><p>Friction ranges from 0.10 to 0.75. Start, target, and position noise also vary. All strategies share each case and the same noise at each move index. The limit is six moves.</p></div><div><span>Counting costs</span><p>Averages include failed runs. Time is sliding time plus 0.35 s per move. Input energy is Σ½mv² for a 1 kg box. It is not motor power use.</p></div><div><span>Reading the results</span><p>Wilson intervals describe each success rate. A claim about a significant difference between strategies needs a separate paired test.</p></div></div>
+</section>
+<section id="method-view" class="view" hidden>
+<div class="intro"><div><p class="eyebrow"><span class="mini-line"></span> OPEN IMPLEMENTATION</p><h1>See the decisions.<span>Check the results.</span></h1><p class="lead">A small physics model, a range of possible answers, and tests you can rerun.</p></div><a class="button primary download-source" href="adaptive-world-lab.zip" download>Download source <span>↓</span></a></div>
+<div class="method-grid">
+<article class="panel method-card"><span class="section-num">01 / WORLD MODEL</span><h2>Keep several possible answers.</h2><p>The model assigns probabilities to 81 friction values from 0.08 to 0.80. After each glide, it uses noisy start and end positions to update those probabilities.</p><div class="equation">d = v₀|v₀| / (2μg)<br><span>p(μ | D) ∝ p(D | μ) p(μ)</span></div><p>The error model includes two position readings, a 3 mm fixed allowance, and 2.5% of predicted distance. Each update keeps 1% of the starting belief. A large prediction error reopens the starting range. These choices do not guarantee accurate 95% intervals when the model is wrong.</p></article>
+<article class="panel method-card"><span class="section-num">02 / ACTIVE IDENTIFICATION</span><h2>Choose a move that teaches.</h2><p>When friction uncertainty is high, the model compares six release speeds. It weighs expected information against motion cost. It rejects a candidate if its estimated chance of crossing the boundary is above 0.1%.</p><div class="equation">score(a) = I(μ; Δx | a, D)<br><span>− 3 E[|Δx|] − 0.03 v₀²</span></div><p>It probes only when the best score is above 0.25. Otherwise it takes a task move. This is a practical rule, not an optimal dual-control solver. Its safety estimate depends on the model being right.</p></article>
+<article class="panel method-card"><span class="section-num">03 / REPLAN AFTER EACH MOVE</span><h2>Predict, act, and plan again.</h2><p>The planner compares 64 candidate speeds and predicts one full glide. After the box stops, it reads a new position and replans. It does not optimize a multi-step action sequence.</p><div class="strategy-definitions"><p><b style="color:var(--fixed)">Fixed model</b>Keeps one friction value.</p><p><b style="color:var(--passive)">Passive adaptation</b>Plans with the current belief and learns after each task move.</p><p><b style="color:var(--active)">Active adaptation</b>Adds the option to take a probe.</p><p><b style="color:var(--robust)">Robust planning</b>Plans for the worst case across the full friction range.</p></div></article>
+<article class="panel method-card"><span class="section-num">04 / INDEPENDENT PHYSICS</span><h2>Check with two worlds.</h2><p>The browser integrates motion numerically. Python can use the same controller design with MuJoCo gravity and frictional contact.</p><p>The MuJoCo box can move along x and z, with rotation locked. Setting its initial speed represents the release. There is no robot arm or camera model.</p><div class="architecture"><span>World</span><i>→ noisy position →</i><span>Model + planner</span><i>→ speed →</i><span>World</span></div><p>The controller only accepts an allowlisted setup and observations. Tests check the data boundary and agreement between Python and JavaScript.</p></article>
+</div>
+<div class="code-section panel"><div><span class="eyebrow">GET IT RUNNING</span><h2>Run your own tests.</h2><p>Python 3.10+ and Node.js 18+. MuJoCo physics runs here need no GPU or OpenGL renderer.</p><a class="text-button" href="README.md" target="_blank" rel="noopener">Setup and project guide ↗</a></div><pre><code>python -m venv .venv
+source .venv/bin/activate
+pip install -e '.[mujoco,test]'
+
+python -m awm.cli demo --engine mujoco
+python -m awm.cli benchmark --engine mujoco --n 100
+pytest -q
+npm ci
+npm test
+
+# Serve the browser demo.
+python -m http.server 8080 --directory dist</code></pre></div>
+<div class="import-panel panel"><div><h2>Replay your own MuJoCo run.</h2><p>Import a JSON file from the Python demo command. The file stays in your browser.</p></div><label class="button subtle file-label" for="import-file">Choose experiment JSON ↑</label><input id="import-file" type="file" accept="application/json,.json" hidden></div>
+<div class="scope-note"><span>Next steps</span><p>Add measured release speed, camera tracking, unknown mass, and delay. Then test on a real surface. This version has no neural residual model and makes no claim of a new research algorithm.</p></div>
+</section>
+</main>
+<footer class="site-footer"><span>ADAPTIVE WORLD LAB <span class="muted">/</span> 2026</span><span>Observe. Try. Learn.</span><a href="adaptive-world-lab.zip" download>Source code ↓</a></footer>
+<div id="toast" role="status" hidden></div>
+<script type="module" src="app.js"></script>
+</body></html>

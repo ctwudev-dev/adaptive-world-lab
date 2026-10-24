@@ -1,0 +1,17 @@
+{
+  "createdAt": "2026-10-23",
+  "python": "3.12.14",
+  "numpy": "2.5.4",
+  "mujoco": "3.17.0",
+  "platform": "Linux x86_64",
+  "codeHashes": {
+    "awm/core.py": "fb70a8f376c999784708b26407f023a4a320b241e1cd3de048ae7e7c6d4dca99",
+    "awm/plants.py": "9699342eba7b1b1d4523ccc4a636e7e2404dddac230ce832cb608e79b817daf8",
+    "awm/experiment.py": "dd70e5277da86f98a1cb8d9d4219c8782639d64531ea367debee043ff3ed71cf",
+    "dist/engine.js": "e812afa5217ef6b8f33dcfe31a6a11776ce5e360a3e520f69837ec77c1a9a2e3"
+  },
+  "seed": 2026,
+  "scenariosPerSuite": 100,
+  "paired": true,
+  "note": "Actual simulated outcomes. No physical robot validation."
+}

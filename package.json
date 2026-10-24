@@ -1,0 +1,16 @@
+{
+  "name": "adaptive-world-lab",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/core.test.mjs tests/ui.test.mjs",
+    "benchmark": "node scripts/benchmark.mjs",
+    "package-source": "python scripts/package_source.py",
+    "check:public": "python scripts/check_public_files.py"
+  },
+  "devDependencies": {
+    "jsdom": "26.1.0"
+  },
+  "description": "A small physics demo that learns from each move."
+}

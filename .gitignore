@@ -1,0 +1,27 @@
+# Local development
+.venv/
+venv/
+node_modules/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*.egg-info/
+build/
+pip-*/
+.DS_Store
+Thumbs.db
+
+# Local configuration, credentials, and hosting identity
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.openai/
+.sites-runtime/
+.agents/
+.codex/
+*.log
+
+# Rebuild the downloadable source archive locally.
+dist/*.zip
