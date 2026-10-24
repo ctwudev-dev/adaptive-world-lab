@@ -1,3 +1,4 @@
+import './business.js';
 import {DEFAULTS,GRID,METHODS,priorFor,beliefStats,runEpisode,validateConfig} from './engine.js';
 const $=id=>document.getElementById(id), $$=s=>[...document.querySelectorAll(s)];
 const presets={
@@ -145,7 +146,7 @@ function renderCards(){
  $('result-cards').innerHTML=Object.entries(METHODS).map(([m,d])=>{const r=runs?.[m];return '<div class="result-card"><span><i class="method-dot '+m+'"></i>'+d.label+'</span>'+(shownResults&&r?'<strong class="'+(r.metrics.success?'pass':'fail')+'">'+(r.metrics.success?'Target reached':r.metrics.boundary?'Out of bounds':'Move limit reached')+'</strong><small>'+r.metrics.actions+' moves · '+r.metrics.time.toFixed(2)+' s</small>':'<strong class="waiting">—</strong><small>AWAITING EXPERIMENT</small>')+'</div>';}).join('');
 }
 function showView(name){
- if(!['lab','benchmark','method'].includes(name))name='lab';
+ if(!['proposal','lab','benchmark','method'].includes(name))name='proposal';
  $$('.view').forEach(el=>el.hidden=el.id!==name+'-view');$$('[data-view]').forEach(b=>b.classList.toggle('selected',b.dataset.view===name));
  if(name==='lab')requestAnimationFrame(()=>render());window.scrollTo({top:0,behavior:'instant'});
 }
@@ -222,5 +223,5 @@ $('export-csv').addEventListener('click',()=>{
  for(const m of Object.keys(METHODS))benchmark.episodes[m].forEach((r,i)=>rows.push([i,m,benchmark.engine,benchmark.suite,r.config.seed,r.config.mu,r.config.start,r.config.target,r.config.noise,...keys.map(k=>r.metrics[k])].join(',')));
  download('awm-paired-'+benchmark.engine+'-'+benchmark.seed+'.csv',rows.join('\n'),'text/csv;charset=utf-8');
 });
-ranges();renderCards();showView(location.hash.slice(1)||'lab');render();
+ranges();renderCards();showView(location.hash.slice(1)||'proposal');render();
 

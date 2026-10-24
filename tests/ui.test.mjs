@@ -41,6 +41,34 @@ function drainFrames(){
 }
 async function until(predicate,ms=8000){const start=Date.now();while(!predicate()){if(Date.now()-start>ms)throw new Error('UI event timed out');await new Promise(r=>setTimeout(r,20));}}
 
+
+test('business view exposes assumptions, downside cases, invalid input, and station navigation', async () => {
+ location.hash = '';
+ dom.window.dispatchEvent(new dom.window.HashChangeEvent('hashchange'));
+ assert.equal($('proposal-view').hidden, false);
+ document.querySelector('.topbar [data-view="proposal"]').click();
+ dom.window.dispatchEvent(new dom.window.HashChangeEvent('hashchange'));
+ assert.equal($('proposal-view').hidden, false);
+ assert.equal($('lab-view').hidden, true);
+ assert.match($('case-net').textContent, /46,600/);
+ assert.match($('case-status').textContent, /Meets/);
+ change('case-scenario', 'downside', 'change');
+ assert.match($('case-net').textContent, /25,400/);
+ assert.match($('case-payback').textContent, /No payback/);
+ assert.match($('case-status').textContent, /No financial payback/);
+ change('case-annualTransfers', '', 'input');
+ assert.equal($('case-export').disabled, true);
+ assert.equal($('case-input-error').hidden, false);
+ assert.equal($('case-net').textContent, '—');
+ click('case-reset');
+ assert.equal($('case-export').disabled, false);
+ await until(() => $('business-evidence').children.length === 3);
+ assert.match($('business-evidence-note').textContent, /not production exception rates/);
+ document.querySelector('.topbar [data-view="lab"]').click();
+ dom.window.dispatchEvent(new dom.window.HashChangeEvent('hashchange'));
+ assert.equal($('lab-view').hidden, false);
+});
+
 test('lab supports step, reset, animation completion, and a counterexample',()=>{
  assert.equal($('metric-actions').textContent.trim(),'0 / 6');
  click('step');assert.equal($('metric-actions').textContent.trim(),'1 / 6');

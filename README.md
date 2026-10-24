@@ -1,156 +1,127 @@
-# Adaptive World Lab
+# Adaptive Transfer Lab
 
-**A small physics demo that learns from its mistakes.**
+**A business pilot proposal for a material-transfer calibration assistant.**
 
-Move a box into a target on an unknown surface. The controller does not know how slippery the surface is. It predicts where the box will stop, watches what happens, and updates its estimate.
+This project asks whether a station can learn changing surface conditions well enough to reduce manual tuning and positioning exceptions - while paying for the time it spends learning.
 
-![A box slides toward a target while the controller observes, learns, and plans again.](docs/overview.svg)
+It combines a working physics prototype with an interactive business case, a pilot plan, and clear acceptance gates.
 
-The question is simple: **Can a model that learns as it goes do better than a model that keeps the same assumptions?**
+**Start here:** [decision proposal](docs/business-proposal.md) · [two-page brief](dist/transfer-pilot-proposal.pdf) · [technical evidence](docs/results.md)
 
-This project includes a working browser demo, Python controllers, MuJoCo contact simulation, saved test data, and automated checks. It keeps failed runs and the cost of extra probes.
+## The business problem
 
-## Try the demo
+A package or tote may stop short or overshoot after a transfer. Changing packaging or surface conditions may require a new release setting. Repeated adjustments and operator interventions can consume time and capacity.
 
-You only need Python to serve the browser files. No API key, GPU, or npm install is needed to use the demo.
+That is the use-case hypothesis. No customer baseline or production saving has been measured for this project.
+
+The proposed buyer is an Operations or Automation Engineering team responsible for one station. The pilot should compare this idea with mechanical guides, a stable fixed recipe, and simpler passive learning.
+
+## The proposal
+
+Approve baseline discovery and guarded bench tests for one station and a defined product family. Use six weeks as a planning window. Treat the sample $35k allowance as a placeholder to be re-estimated, not a quote or a request to deploy.
+
+The intended first equipment workflow is a recommendation for operator approval. The current release is an offline simulator and decision-support tool. It does not control production equipment.
+
+## What the working product shows
+
+| Part | What it lets a reviewer do |
+|---|---|
+| Business case | Change volume, exception rates, direct cost, extra time, support, and investment. |
+| Downside analysis | See when the assumed improvement misses the payback target or loses value. |
+| Station model | Inspect friction estimates, candidate moves, predictions, and model updates. |
+| Evidence | Compare four strategies across shared cases, including failures and probe cost. |
+| Pilot plan | Review ownership, measures, stop rules, and go/no-go gates. |
+| Export | Download the proposal, source, raw experiment data, and entered financial assumptions. |
+
+The interface labels what is built, what is assumed, and what still needs a real trial. A positive financial scenario never changes the deployment status to approved.
+
+## Try it locally
+
+You need Python to serve the static app. The browser app itself needs no API key or GPU.
 
 ~~~bash
 python -m http.server 8080 --directory dist
 ~~~
 
-Open [localhost:8080](http://localhost:8080).
+Open [localhost:8080](http://localhost:8080). Start on **Business case**, try the **Less improvement** and **Worse outcome** scenarios, then inspect **Station model** and **Evidence**.
 
-1. Press **Start experiment**, or **Step** to inspect one move at a time.
-2. Compare **Active adaptation** with **Fixed model** on the same surface.
-3. Try **A probe may not pay off** and **The model starts right**. Extra learning can cost more than it saves.
-4. Open **Compare strategies** to run a new batch, or load the saved MuJoCo results.
+All calculations and exports run in the browser. The app does not upload entered business assumptions.
 
-The chart shows possible friction values and how their probabilities change. A narrow range means the model is more certain. It can still be wrong.
+## Illustrative economics
 
-## Four ways to solve the same task
+The sample case assumes 1.2 million transfers per year, a change from 12 to 8 exceptions per 1,000, $12 per avoided exception, $5k in extra time cost, $6k in annual support, and $35k upfront.
 
-| Strategy | What it does |
-|---|---|
-| Fixed model | Uses the same friction estimate for every move. |
-| Passive adaptation | Starts the task and learns from each move. |
-| Active adaptation | May choose a small probe to learn before moving toward the target. |
-| Robust planning | Plans for the worst case across the full friction range. It does not learn. |
+| Modeled output | Value |
+|---|---:|
+| Gross annual benefit | $57,600 |
+| Annual net benefit after time and support | $46,600 |
+| First-year net value after upfront cost | $11,600 |
+| Simple value payback | About 9.0 months |
 
-All four strategies face the same cases, position noise, and six-move limit. Probes count as moves.
+**These are scenario calculations, not achieved savings or market benchmarks.** If the rate only improves to 10 per 1,000, modeled payback rises to about 23.6 months. With no improvement, ongoing costs lose $11,000 of value per year.
 
-## What the saved experiments show
+Time saved is capacity, not cash, unless Finance confirms an avoided cost. The model does not turn simulation success percentages into production exception rates.
 
-The project includes **1,200 MuJoCo runs**: three test sets, 100 cases per set, and four strategies.
+## Technical evidence
 
-Successful runs out of 100:
+The release retains 1,200 MuJoCo runs: three test sets, 100 cases each, and four strategies.
 
-| Test set | Fixed | Passive | Active | Robust |
+| Successful simulated runs / 100 | Fixed | Passive | Active | Robust |
 |---|---:|---:|---:|---:|
 | Unknown fixed friction | 83 | 99 | 100 | 27 |
-| Friction changes after the first move | 65 | 90 | 89 | 48 |
-| Extra drag that the model does not know about | 88 | 100 | 99 | 24 |
+| Friction changes | 65 | 90 | 89 | 48 |
+| Extra drag | 88 | 100 | 99 | 24 |
 
-In the fixed-friction set, Active used **3.42 moves** on average. Passive used **2.98**. Active succeeded once more, but needed **0.44 more moves** on average.
+Active used 3.42 moves on average in the first set; Passive used 2.98. The extra 0.44 moves are a commercial trade-off. The pilot should establish when a separate probe is worth paying for.
 
-**Learning helped in these tests. A separate probe was not always worth its cost.** These results do not establish a statistically significant difference between Active and Passive.
+No between-strategy significance test was run. Simulation success is not proof of production reliability or financial benefit. See [results and limitations](docs/results.md).
 
-See [the full results](docs/results.md) for costs, uncertainty ranges, and limits. The raw JSON and paired CSV files are in [results](results).
+## Run the engineering checks
 
-## Run the Python version
-
-Use Python 3.10 or later. These commands are for macOS or Linux.
+Python 3.10+ and Node.js 18+:
 
 ~~~bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -e '.[mujoco,test]'
-
-# Run all four strategies with MuJoCo.
-python -m awm.cli demo --engine mujoco --output results/demo.json
-
-# Run 100 shared cases per strategy.
-python -m awm.cli benchmark --engine mujoco --n 100 --seed 2026 \
-  --output results/benchmark.json
-
-# Run the checks.
-pytest -q
-~~~
-
-On Windows, activate the environment with .venv\Scripts\activate.
-
-To use only the numerical simulator, install with pip install -e '.[test]' and omit --engine mujoco. MuJoCo runs here do not use an OpenGL renderer.
-
-To rebuild all three saved MuJoCo test sets:
-
-~~~bash
-pip install -r requirements-repro.txt
-python -m scripts.reproduce
-~~~
-
-The pinned packages record the experiment environment. Results may differ slightly across platforms.
-
-## Run the browser checks
-
-Use Node.js 18 or later.
-
-~~~bash
 npm ci
+pytest -q
 npm test
-node scripts/benchmark.mjs 100 2026 uniform
+python scripts/check_public_files.py
 ~~~
 
-The browser app has no runtime packages. The jsdom package is only used for interface tests.
+On Windows, activate with .venv\Scripts\activate. For full experiment reproduction, use requirements-repro.txt and python -m scripts.reproduce.
 
-## Validation
+The business release passed 64 local tests: 43 Python and 21 JavaScript checks. The two-page brief was rendered and visually reviewed. Live-browser layout review remains incomplete; see [verification notes](docs/verification.md).
 
-- 43 Python tests passed, including nine MuJoCo contact cases.
-- 13 JavaScript tests passed, including playback, reset, background comparison, and cancellation.
-- All 1,200 MuJoCo runs were repeated for this English release. The success counts match the table above.
-- Python and JavaScript decisions are checked against each other.
-- The source and downloadable archive are checked for common private data.
+To rebuild the brief, install the optional proposal dependencies:
 
-Browser layout has not been visually checked because the preview service was unavailable. Interface tests check behavior, not visual layout. See [validation details](docs/verification.md).
+~~~bash
+pip install -e '.[proposal]'
+npm run proposal
+python scripts/package_source.py
+python scripts/check_release.py
+~~~
 
-## How it works
+## Scope and next stage
 
-1. **Observe:** read a noisy position measurement.
-2. **Predict:** estimate where each candidate release speed would stop the box.
-3. **Choose:** take a task move, or a probe if its expected information is worth the cost.
-4. **Update:** compare the measured motion with the predictions, then revise the friction belief.
-5. **Repeat:** plan again until the box reaches the target or the move limit is reached.
+The station model is one-dimensional free sliding with known, exact release speed. It does not include a conveyor drive, jams, a robot arm, camera tracking, PLC integration, or physical safety enforcement.
 
-The simulator holds the true friction value. The controller receives only an allowlisted configuration and sensor observations. It cannot read the hidden friction through that interface.
+Before a live pilot, measure release speed, check model fit, and define an approved equipment envelope. Reject the idea if a simpler hardware or fixed-recipe change offers better value.
 
 ## Project map
 
 | Path | Purpose |
 |---|---|
-| [awm/core.py](awm/core.py) | Friction belief, model update, and action planning. |
-| [awm/plants.py](awm/plants.py) | Independent numerical and MuJoCo worlds. |
-| [awm/experiment.py](awm/experiment.py) | Shared cases and fair strategy comparisons. |
-| [awm/cli.py](awm/cli.py) | Demo and benchmark commands; JSON and CSV export. |
-| [dist](dist) | Browser app, plots, replay controls, and background benchmarks. |
-| [tests](tests) | Physics, data boundaries, repeatability, Python/JavaScript agreement, and interface checks. |
-| [docs/method.md](docs/method.md) | Model assumptions and algorithm details. |
+| [docs/business-proposal.md](docs/business-proposal.md) | Decision request, economics, buyer, pilot, risks, and open commercial questions. |
+| [dist/business-case.js](dist/business-case.js) | Validated scenario calculations and assumption export. |
+| [dist/business.js](dist/business.js) | Business interface and saved-evidence summary. |
+| [awm](awm) | Independent Python controllers, simulator interfaces, and evaluation. |
+| [dist/engine.js](dist/engine.js) | Matching browser physics and control implementation. |
+| [tests](tests) | Physics, isolation, interface, business arithmetic, and downside checks. |
+| [docs/research-guide.md](docs/research-guide.md) | Original research overview and reproduction commands. |
+| [docs/verification.md](docs/verification.md) | Completed checks and remaining verification limits. |
 
-The project combines simulation, probability, control, data export, and tests. It uses a small physics model rather than a large trained model.
+The repository name and Python package retain the original Adaptive World Lab identity. The proposal is the business-facing layer over that research core.
 
-## Limits
-
-- The task is one-dimensional sliding. Release speed is treated as known and exact.
-- There is no robot arm, camera tracking, or real-world validation.
-- The planner looks ahead one complete glide at a time. It is not a multi-step optimal controller.
-- Robust is a simple worst-case baseline, not the best possible robust controller.
-- A model-based safety check is not a real-world safety guarantee.
-- The data boundary is a software interface, not a sandbox against malicious code.
-
-This is a **simulation-to-simulation research prototype**. It does not prove transfer to a physical robot.
-
-## Next steps
-
-- Compare a separate probe with information already gained during the task.
-- Add uncertain release speed and changing friction.
-- Test the same interface with real sliding measurements.
-- Extend the task to two dimensions and actual pushing contact.
-
-See [privacy notes](docs/privacy.md) for what is excluded from this source release.
+See [privacy notes](docs/privacy.md). Source files exclude personal contacts, local configuration, and hosting identifiers.

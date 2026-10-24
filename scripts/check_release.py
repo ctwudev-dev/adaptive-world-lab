@@ -30,9 +30,10 @@ for link in page.links:
     if parts.scheme or not parts.path:
         continue
     assert (DIST/parts.path).is_file(),f"Missing linked asset {link}"
-for element in set(re.findall(r"(?<!\$)\$\('([^']+)'\)",(DIST/"app.js").read_text())):
-    assert element in page.ids,f"Unknown DOM id {element}"
-for name in ("engine.js","app.js","benchmark-worker.js","style.css","mujoco-demo.json","README.md","adaptive-world-lab.zip"):
+for script_name in ("app.js", "business.js"):
+    for element in set(re.findall(r"(?<!\$)\$\('([^']+)'\)", (DIST/script_name).read_text())):
+        assert element in page.ids,f"Unknown DOM id {element}"
+for name in ("engine.js","app.js","business.js","business-case.js","benchmark-worker.js","style.css","mujoco-demo.json","README.md","proposal.md","transfer-pilot-proposal.pdf","business-case-sample.json","adaptive-world-lab.zip"):
     assert (DIST/name).is_file(),name
 assert (DIST/"README.md").read_bytes()==(ROOT/"README.md").read_bytes()
 for filename in ("verified-benchmark.json","verified-shift.json","verified-mismatch.json"):

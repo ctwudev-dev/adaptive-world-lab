@@ -3,18 +3,81 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0d1116">
-<meta name="description" content="A small physics demo that learns how slippery a surface is. Compare fixed models, learning during the task, active probes, and robust planning.">
-<title>Adaptive World Lab — Learn from each move</title>
+<meta name="description" content="A pilot proposal for adaptive transfer calibration: a working station model, honest simulation evidence, scenario economics, and measurable trial gates.">
+<title>Adaptive Transfer Lab — A measurable operations pilot</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230d1116'/%3E%3Cpath d='M15 47 32 14l17 33M23 33h18' fill='none' stroke='%23ffb068' stroke-width='5'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="topbar"><a class="brand" href="#lab" aria-label="Adaptive World Lab home"><span class="brand-mark">Λ<span></span></span><span>ADAPTIVE<span class="brand-sub">WORLD LAB</span></span></a>
-<nav aria-label="Main navigation"><button class="nav-link selected" data-view="lab">Lab</button><button class="nav-link" data-view="benchmark">Compare strategies</button><button class="nav-link" data-view="method">How it works <span>↗</span></button></nav>
-<div class="version"><span class="live-dot"></span>RESEARCH PROTOTYPE <span class="v-tag">v1.0</span></div></header>
+<header class="topbar"><a class="brand" href="#proposal" aria-label="Adaptive Transfer Lab home"><span class="brand-mark">Λ<span></span></span><span>ADAPTIVE<span class="brand-sub">TRANSFER LAB</span></span></a>
+<nav aria-label="Main navigation"><button class="nav-link selected" data-view="proposal">Business case</button><button class="nav-link" data-view="lab">Station model</button><button class="nav-link" data-view="benchmark">Evidence</button><button class="nav-link" data-view="method">Method</button></nav>
+<div class="version"><span class="live-dot"></span>PILOT PROPOSAL <span class="v-tag">v1.1</span></div></header>
 <main>
-<section id="lab-view" class="view">
-<div class="intro"><div><p class="eyebrow"><span class="mini-line"></span> LEARNING THROUGH ACTION <span class="muted">/</span> EXPERIMENT 001</p><h1>The world changes.<span>The model can learn.</span></h1><p class="lead">Slide a box on an unknown surface. Watch the model learn<br class="desktop-break">from each move, then use that knowledge to reach the target.</p></div><div class="intro-aside"><span class="outline-cube">◇</span><span>OBSERVE → EXPERIMENT → ADAPT</span><p>A model that can check and revise its own assumptions.</p></div></div>
+<section id="proposal-view" class="view">
+<div class="proposal-hero">
+  <div class="proposal-hero-copy"><p class="eyebrow"><span class="mini-line"></span> OPERATIONS / PILOT PROPOSAL</p>
+  <h1>Less guesswork<br><span>at the transfer station.</span></h1>
+  <p class="proposal-lead">A calibration assistant for one material-transfer station. Test whether learning changing surface conditions can reduce manual tuning and positioning exceptions.</p>
+  <div class="proposal-actions"><button class="button primary" id="case-scroll">Build the business case <span>↗</span></button><button class="button subtle" data-view="lab">Open station model <span>→</span></button></div>
+  <div class="proposal-tags"><span>One-station scope</span><span>Operator-approved trial</span><span>Simulation evidence</span></div></div>
+  <aside class="decision-brief panel"><span class="eyebrow">THE DECISION</span><h2>Fund a small pilot.<br>Earn the next step.</h2>
+  <dl><div><dt>Proposed window</dt><dd>6 weeks</dd></div><div><dt>Accountable owner</dt><dd>Automation Engineering</dd></div><div><dt>Planning allowance</dt><dd>$35k <small>illustrative</small></dd></div><div><dt>Current readiness</dt><dd>Simulation prototype</dd></div></dl>
+  <a class="text-button" href="transfer-pilot-proposal.pdf" download>Download the decision brief ↓</a></aside>
+</div>
+<div class="proposal-question"><span>THE BUSINESS QUESTION</span><p>Can fewer handling exceptions pay for the extra calibration time, support, and integration cost?</p></div>
+<div class="business-problems">
+  <article><span class="section-num">01 / SETUP</span><h2>Manual retuning</h2><p>A new package or surface condition may need a new release setting. Measure technician time per changeover before claiming a saving.</p></article>
+  <article><span class="section-num">02 / QUALITY</span><h2>Repeat exceptions</h2><p>Overshoot or a short stop may need operator help. Count interventions per 1,000 transfers and their actual handling cost.</p></article>
+  <article><span class="section-num">03 / CAPACITY</span><h2>Learning takes time</h2><p>An extra probe can slow the process. Compare passive learning first; require a probe to justify its added cost.</p></article>
+</div>
+<section class="business-section" id="business-calculator">
+  <div class="business-section-heading"><div><p class="eyebrow">01 / SCENARIO ECONOMICS</p><h2>Does the idea pay for itself?</h2><p>All starting values below are illustrative assumptions. Replace them with measured pilot data.</p></div><span class="evidence-label assumption">ASSUMPTIONS, NOT RESULTS</span></div>
+  <div class="case-layout">
+    <div class="case-inputs panel"><div class="case-input-heading"><h3>Change the assumptions</h3><button id="case-reset" class="text-button">Reset</button></div>
+    <label class="field-label" for="case-scenario">Sample scenario</label><select id="case-scenario"><option value="base">Entered target: 12 to 8 exceptions / 1,000</option><option value="conservative">Less improvement: 12 to 10 / 1,000</option><option value="downside">Worse outcome: 12 to 13 / 1,000</option></select>
+    <div class="case-fields"><label class="case-field" for="case-annualTransfers"><span>Transfers per year</span><input id="case-annualTransfers" type="number" value="1200000" min="1" max="1000000000" step="1" inputmode="decimal"><small>Items/year</small></label>
+<label class="case-field" for="case-beforePerThousand"><span>Current exceptions per 1,000</span><input id="case-beforePerThousand" type="number" value="12" min="0" max="1000" step="0.1" inputmode="decimal"><small>Assumed baseline</small></label>
+<label class="case-field" for="case-afterPerThousand"><span>Target exceptions per 1,000</span><input id="case-afterPerThousand" type="number" value="8" min="0" max="1000" step="0.1" inputmode="decimal"><small>Assumed outcome</small></label>
+<label class="case-field" for="case-costPerException"><span>Cost per exception</span><input id="case-costPerException" type="number" value="12" min="0" max="1000000" step="0.1" inputmode="decimal"><small>USD/case</small></label>
+<label class="case-field" for="case-annualExtraTimeCost"><span>Extra calibration and time cost</span><input id="case-annualExtraTimeCost" type="number" value="5000" min="0" max="1000000000000" step="100" inputmode="decimal"><small>USD/year</small></label>
+<label class="case-field" for="case-annualSupportCost"><span>Support and upkeep</span><input id="case-annualSupportCost" type="number" value="6000" min="0" max="1000000000000" step="100" inputmode="decimal"><small>USD/year</small></label>
+<label class="case-field" for="case-upfrontCost"><span>Pilot and integration cost</span><input id="case-upfrontCost" type="number" value="35000" min="0" max="1000000000000" step="100" inputmode="decimal"><small>USD, one time</small></label>
+<label class="case-field" for="case-targetPaybackMonths"><span>Payback target</span><input id="case-targetPaybackMonths" type="number" value="12" min="1" max="120" step="1" inputmode="decimal"><small>Months</small></label></div>
+    <p class="case-help">An exception is one transfer needing operator help. Use direct, non-overlapping costs. Extra time cost includes probes and any lost capacity; it must not be counted again in exception cost.</p>
+    <p id="case-input-error" class="case-error" role="alert" hidden></p>
+    </div>
+    <div class="case-output panel"><div class="case-output-heading"><span class="eyebrow">ENTERED SCENARIO / USD</span><span class="evidence-label assumption">UNVERIFIED</span></div>
+      <div class="case-metrics"><div><span>Annual net benefit</span><strong id="case-net">—</strong><small>After extra time and support</small></div><div><span>Simple payback</span><strong id="case-payback">—</strong><small>No discounting or tax effects</small></div><div><span>First-year net value</span><strong id="case-first-year">—</strong><small>After upfront cost</small></div></div>
+      <div class="case-bridge"><div><span>Avoided exception cost</span><strong id="case-gross">—</strong></div><p id="case-avoided"></p><div><span>Extra calibration and time</span><strong id="case-extra-cost">—</strong></div><div><span>Annual support</span><strong id="case-support-cost">—</strong></div><div><span>One-time pilot and integration</span><strong id="case-upfront-cost">—</strong></div></div>
+      <p id="case-status" class="case-status" aria-live="polite"></p><p id="case-threshold" class="case-detail"></p><p id="case-roi" class="case-detail"></p>
+      <div class="case-boundary"><b>Financial model only.</b> A positive scenario does not approve deployment. Physical validation, throughput, quality, and operator approval are still required.</div>
+      <button class="button subtle" id="case-export">Export this business case <span>↓</span></button>
+    </div>
+  </div>
+  <div class="panel sensitivity-panel"><div class="panel-heading"><h3>Check how much the conclusion depends on the assumptions</h3></div><div class="table-scroll"><table><thead><tr><th>Scenario</th><th>Exceptions / 1,000</th><th>Annual net benefit</th><th>Payback</th></tr></thead><tbody id="case-sensitivity"></tbody></table></div></div>
+</section>
+<section class="business-section">
+  <div class="business-section-heading"><div><p class="eyebrow">02 / TECHNICAL EVIDENCE</p><h2>What is proven so far?</h2><p>A small station model tests the learning mechanism. It does not reproduce a full conveyor line.</p></div><button class="text-button" data-view="benchmark">Inspect the full evidence →</button></div>
+  <div class="panel"><div class="table-scroll"><table><thead><tr><th>Simulated case</th><th>Fixed</th><th>Passive</th><th>Active</th><th>Robust</th></tr></thead><tbody id="business-evidence"></tbody></table></div><p class="evidence-caption" id="business-evidence-note">Loading saved simulation evidence...</p></div>
+  <div class="evidence-interpretation"><span class="evidence-label observed">OBSERVED IN SIMULATION</span><p id="business-probe-cost">Probe cost is included in the evidence.</p></div>
+  <div class="evidence-levels"><article><span class="evidence-label observed">BUILT</span><h3>Learning and evaluation</h3><p>Unknown-friction simulation, model updates, action planning, four strategy baselines, replay, and export.</p></article><article><span class="evidence-label assumption">MODELED</span><h3>The commercial case</h3><p>Editable volume, exception rates, cost, calibration overhead, support, payback, and downside scenarios.</p></article><article><span class="evidence-label pending">TO VALIDATE</span><h3>The real station</h3><p>Release-speed measurement, equipment interface, guarded trials, operator workflow, and production benefit.</p></article></div>
+</section>
+<section class="business-section">
+  <div class="business-section-heading"><div><p class="eyebrow">03 / PILOT PLAN</p><h2>Small scope. Clear stop rules.</h2><p>One station and a defined product family. Six weeks is a planning window, not a sample-size guarantee.</p></div><a class="text-button" href="proposal.md" download>Download the full proposal ↓</a></div>
+  <div class="pilot-steps">
+    <article><span>WEEK 1</span><h3>Measure the baseline</h3><p>Log exception rate, cycle time, changeover work, and direct cost. Agree on definitions and a minimum worthwhile effect.</p></article>
+    <article><span>WEEK 2</span><h3>Validate off the line</h3><p>Measure release speed and stopping error on a guarded test fixture. Check where the simple friction model fails.</p></article>
+    <article><span>WEEKS 3-4</span><h3>Run a controlled trial</h3><p>Start with recommendations only. Use approved test windows and matched product groups to compare strategies.</p></article>
+    <article><span>WEEKS 5-6</span><h3>Make the decision</h3><p>Count exceptions and all added time. Review cost, confidence, overrides, and failure cases with Operations and Quality.</p></article>
+  </div>
+  <div class="pilot-gates panel"><div><span class="eyebrow">PROPOSED ACCEPTANCE GATES</span><h3>Agree before collecting results.</h3><p>These targets are a proposal, not industry standards or achieved results.</p></div><ul><li>At least 20% lower intervention rate in matched product groups, with an agreed uncertainty analysis.</li><li>No more than 2% loss of throughput; no worsening of damage or stop events.</li><li>Measured costs support payback within the agreed target.</li><li>Every live setting change needs an approved equipment envelope, rollback, and a named owner.</li></ul></div>
+  <div class="proposal-close"><div><span class="eyebrow">PROPOSED NEXT DECISION</span><h2>Approve discovery and bench testing.</h2><p>Do not commit to production rollout on simulation scores or the sample ROI alone.</p></div><button class="button primary" data-view="lab">Review the station model <span>→</span></button></div>
+</section>
+<div class="scope-note"><span>Prototype scope</span><p>The current world is a 1D free glide with known release speed. Belt contact, jams, vision, PLC control, and physical safety systems are outside the implemented model. No live equipment is connected.</p></div>
+</section>
+
+<section id="lab-view" class="view" hidden>
+<div class="intro"><div><p class="eyebrow"><span class="mini-line"></span> LEARNING THROUGH ACTION <span class="muted">/</span> EXPERIMENT 001</p><h1>Calibrate one transfer.<span>Check each move.</span></h1><p class="lead">The box stands in for one transferred item. This 1D model tests<br class="desktop-break">how friction learning changes release decisions and their cost.</p></div><div class="intro-aside"><span class="outline-cube">◇</span><span>OBSERVE → EXPERIMENT → ADAPT</span><p>A model that can check and revise its own assumptions.</p></div></div>
 <div class="workspace">
 <aside class="controls panel">
 <div class="panel-heading"><span class="section-num">01</span><h2>Set the world</h2><span class="tiny-chip">HIDDEN TO AGENT</span></div>
@@ -76,7 +139,7 @@ python -m http.server 8080 --directory dist</code></pre></div>
 <div class="scope-note"><span>Next steps</span><p>Add measured release speed, camera tracking, unknown mass, and delay. Then test on a real surface. This version has no neural residual model and makes no claim of a new research algorithm.</p></div>
 </section>
 </main>
-<footer class="site-footer"><span>ADAPTIVE WORLD LAB <span class="muted">/</span> 2026</span><span>Observe. Try. Learn.</span><a href="adaptive-world-lab.zip" download>Source code ↓</a></footer>
+<footer class="site-footer"><span>ADAPTIVE TRANSFER LAB <span class="muted">/</span> PILOT</span><span>Observe. Try. Learn.</span><a href="adaptive-world-lab.zip" download>Source code ↓</a></footer>
 <div id="toast" role="status" hidden></div>
 <script type="module" src="app.js"></script>
 </body></html>

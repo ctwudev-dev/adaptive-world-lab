@@ -1,0 +1,87 @@
+{
+  "schema": "transfer-business-case-v1",
+  "currency": "USD",
+  "inputStatus": "User-supplied scenario; not verified production data.",
+  "inputs": {
+    "annualTransfers": 1200000,
+    "beforePerThousand": 12,
+    "afterPerThousand": 8,
+    "costPerException": 12,
+    "annualExtraTimeCost": 5000,
+    "annualSupportCost": 6000,
+    "upfrontCost": 35000,
+    "targetPaybackMonths": 12
+  },
+  "outputs": {
+    "avoidedExceptions": 4800,
+    "grossAnnualBenefit": 57600,
+    "annualOperatingCosts": 11000,
+    "annualNetBenefit": 46600,
+    "firstYearNetValue": 11600,
+    "paybackMonths": 9.012875536480687,
+    "firstYearRoi": 0.3314285714285714,
+    "breakEvenAfterPerThousand": 8.805555555555555,
+    "financialTargetMet": true,
+    "evidenceBasis": "Unverified scenario inputs. No production benefit has been demonstrated.",
+    "deploymentApproved": false
+  },
+  "sensitivity": [
+    {
+      "label": "No change in exceptions",
+      "afterPerThousand": 12,
+      "result": {
+        "avoidedExceptions": 0,
+        "grossAnnualBenefit": 0,
+        "annualOperatingCosts": 11000,
+        "annualNetBenefit": -11000,
+        "firstYearNetValue": -46000,
+        "paybackMonths": null,
+        "firstYearRoi": -1.3142857142857143,
+        "breakEvenAfterPerThousand": 8.805555555555555,
+        "financialTargetMet": false,
+        "evidenceBasis": "Unverified scenario inputs. No production benefit has been demonstrated.",
+        "deploymentApproved": false
+      }
+    },
+    {
+      "label": "Half the entered change",
+      "afterPerThousand": 10,
+      "result": {
+        "avoidedExceptions": 2400,
+        "grossAnnualBenefit": 28800,
+        "annualOperatingCosts": 11000,
+        "annualNetBenefit": 17800,
+        "firstYearNetValue": -17200,
+        "paybackMonths": 23.59550561797753,
+        "firstYearRoi": -0.49142857142857144,
+        "breakEvenAfterPerThousand": 8.805555555555555,
+        "financialTargetMet": false,
+        "evidenceBasis": "Unverified scenario inputs. No production benefit has been demonstrated.",
+        "deploymentApproved": false
+      }
+    },
+    {
+      "label": "Entered scenario",
+      "afterPerThousand": 8,
+      "result": {
+        "avoidedExceptions": 4800,
+        "grossAnnualBenefit": 57600,
+        "annualOperatingCosts": 11000,
+        "annualNetBenefit": 46600,
+        "firstYearNetValue": 11600,
+        "paybackMonths": 9.012875536480687,
+        "firstYearRoi": 0.3314285714285714,
+        "breakEvenAfterPerThousand": 8.805555555555555,
+        "financialTargetMet": true,
+        "evidenceBasis": "Unverified scenario inputs. No production benefit has been demonstrated.",
+        "deploymentApproved": false
+      }
+    }
+  ],
+  "pilotGates": {
+    "matchedBaseline": "Not assessed",
+    "physicalValidation": "Not assessed",
+    "throughputAndQuality": "Not assessed",
+    "operationalApproval": "Not assessed"
+  }
+}

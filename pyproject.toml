@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "adaptive-world-lab"
-version = "1.0.0"
+version = "1.1.0"
 description = "Active system identification and uncertainty-aware receding-horizon control on a hidden-friction sliding task"
 requires-python = ">=3.10"
 dependencies = ["numpy>=1.26,<3"]
@@ -12,6 +12,7 @@ dependencies = ["numpy>=1.26,<3"]
 [project.optional-dependencies]
 mujoco = ["mujoco>=3.3,<4"]
 test = ["pytest>=8,<10"]
+proposal = ["reportlab>=4,<5"]
 
 [project.scripts]
 awm = "awm.cli:main"

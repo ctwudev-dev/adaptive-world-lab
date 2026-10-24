@@ -1,16 +1,17 @@
 {
   "name": "adaptive-world-lab",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tests/core.test.mjs tests/ui.test.mjs",
+    "test": "node --test tests/core.test.mjs tests/business-case.test.mjs tests/ui.test.mjs",
     "benchmark": "node scripts/benchmark.mjs",
     "package-source": "python scripts/package_source.py",
-    "check:public": "python scripts/check_public_files.py"
+    "check:public": "python scripts/check_public_files.py",
+    "proposal": "node scripts/business_case_sample.mjs && python scripts/build_proposal.py"
   },
   "devDependencies": {
     "jsdom": "26.1.0"
   },
-  "description": "A small physics demo that learns from each move."
+  "description": "A business pilot proposal for adaptive transfer calibration, with a working physics model and scenario economics."
 }

@@ -12,6 +12,8 @@ Excluded from the repository and source archive:
 
 The browser demo runs its calculations locally. It does not use cloud inference, analytics, or external fonts. Imported recordings stay in the browser. Exported files are created locally.
 
+Entered business assumptions also stay in the browser. The business-case JSON is a local export, not a submission for approval or an upload to a company system. The PDF uses a generic project author and contains no personal contact information.
+
 Experiment files contain simulation settings, results, random seeds, software versions, and source hashes. They do not contain user recordings or personal data.
 
 GitHub still shows the repository owner and records activity under that account. File cleanup cannot make an account-owned repository anonymous. Keep the repository private if that account link should not be public.
