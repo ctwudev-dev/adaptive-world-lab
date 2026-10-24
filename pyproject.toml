@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "adaptive-world-lab"
-version = "1.1.0"
-description = "Active system identification and uncertainty-aware receding-horizon control on a hidden-friction sliding task"
+version = "2.0.0"
+description = "Robot physics learning from force-driven planar contact, with paired evaluation and explicit learning costs"
 requires-python = ">=3.10"
 dependencies = ["numpy>=1.26,<3"]
 

@@ -1,45 +1,44 @@
 # Validation
 
-Release 1.1 adds a business proposal, scenario economics, and a pilot-review interface over the original research core. The physics and controller source files used by the saved experiments are unchanged.
+Version 2.0 adds force-driven planar robot contact, joint friction/mass estimation, a new browser experiment, and paired contact tests. The earlier one-dimensional physics files and records are retained separately.
 
 ## Completed checks
 
 | Check | Result |
 |---|---|
-| Python tests | 43 passed |
-| JavaScript core, business-case, and interface tests | 21 passed |
-| Total local tests | 64 passed |
-| Saved MuJoCo data | 1,200 recorded runs retained from the research release |
-| Saved experiment source hashes | Verified against the unchanged physics/controller files |
-| Two-page decision brief | Both pages rendered and visually reviewed |
-| Python and JavaScript agreement | Covered by the Python test suite |
-| Source and archive review | Checked for common private data and untranslated text |
+| Python tests | 47 passed, including independent MuJoCo pusher contact |
+| JavaScript physics, business, and interface tests | 42 passed |
+| Total local tests | 89 passed |
+| New contact experiments | 540 MuJoCo episodes, all outcomes retained |
+| New numerical experiments | 540 browser-model episodes, all outcomes retained |
+| Replay | Full recorded contact trajectories for all three strategies |
+| Earlier free-glide data | 1,200 runs retained and source hashes checked |
+| Release files and data | Linked assets, summary counts, source hashes, and source ZIP checked |
+| Privacy and English | Source and archive checked for common private data and untranslated text |
 
-Commands:
+Tests cover sub-threshold force, mass/friction effects, diagonal motion, coasting, actual simulated pusher contact impulse, and the absence of direct object forces. Other checks cover joint estimation, parameter isolation, zero-information ablation, changing friction, probe/time accounting, repeatability, confidence-interval endpoints, and invalid sensor or action inputs.
+
+Interface tests use jsdom and real Node worker adapters. They cover default navigation, stepping, animation completion, model updates, invalid input, resetting, independent contact replay, switching back to the numerical model, paired result loading, background computation, cancellation, and exports becoming available. The earlier business and one-dimensional interactions remain tested.
+
+The new full experiment commands were run for this release. Raw cases, outcomes, and hashes of the physics, controller, and case-generation code are saved with the data. The earlier full 1,200-run benchmark was not rerun for this change; its unchanged simulation/controller source hashes and data integrity were checked.
+
+## Reproduce
 
 ~~~bash
 pytest -q
 npm test
-python -m scripts.reproduce
-node scripts/business_case_sample.mjs
-python scripts/build_proposal.py
+node scripts/robot_benchmark.mjs 60 2048
+python -m scripts.robot_contact_benchmark --n 60 --seed 2048
+python scripts/robot_report.py
 python scripts/package_source.py
 python scripts/check_release.py
 python scripts/check_public_files.py
 ~~~
 
-The contact tests cover three friction values and three release speeds, including reverse motion. Other tests check hidden-value isolation, belief updates, action costs, repeatability, confidence intervals, and invalid input.
+## Verification limits
 
-Interface tests use jsdom and a real background worker adapter. They cover the business entry view, navigation, invalid input, downside cases, starting, stepping, resetting, replaying MuJoCo data, running comparisons, loading saved results, and cancelling a comparison.
+Real-browser visual layout QA could not run because the managed preview service was unavailable. Interface behavior checks do not establish how every screen size renders. Responsive rules, semantic controls, reduced-motion behavior, and canvas fallbacks are implemented, but remain subject to visual review.
 
-Business-case tests check all cost terms, losses, zero-cost edge cases, payback thresholds, input validation, sensitivity, and exports. A positive financial result never sets deployment approval. The PDF reads the shared sample calculations and saved simulation summaries rather than inventing commercial outcomes.
+No physical robot, camera, measured-force sensor, or real-table test was run. The two engines share a narrow idealized task and friction family. The results do not establish transfer to real hardware, general robot intelligence, customer demand, production savings, or deployment readiness.
 
-The full experiment reproduction command above rebuilds the research data. It was not repeated for the business presentation change; source hashes and data integrity were checked instead.
-
-## Not completed
-
-The web layout still needs a real-browser visual review. Interface tests do not establish that every screen size looks correct. The PDF visual review does not substitute for a browser layout review.
-
-No physical robot, camera, actuator, or real-table test was run.
-
-No customer baseline, equipment pilot, production saving, willingness to pay, or deployment readiness has been validated. The financial examples are assumptions.
+The retained two-page transfer proposal was visually checked in the earlier release. Its illustrative financial assumptions remain separate from the new robot results.

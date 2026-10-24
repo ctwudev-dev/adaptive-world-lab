@@ -10,7 +10,7 @@ Excluded from the repository and source archive:
 - API keys, access tokens, passwords, cookies, and environment files.
 - Local machine paths, virtual environments, package caches, and logs.
 
-The browser demo runs its calculations locally. It does not use cloud inference, analytics, or external fonts. Imported recordings stay in the browser. Exported files are created locally.
+The browser demo runs its calculations locally. It does not use cloud inference, analytics, or external fonts. Recorded simulation files are fetched from the same site. Exports are created locally. The new robot interface does not request a camera, microphone, location, or hardware connection.
 
 Entered business assumptions also stay in the browser. The business-case JSON is a local export, not a submission for approval or an upload to a company system. The PDF uses a generic project author and contains no personal contact information.
 

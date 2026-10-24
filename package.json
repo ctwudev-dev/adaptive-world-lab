@@ -1,17 +1,19 @@
 {
   "name": "adaptive-world-lab",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tests/core.test.mjs tests/business-case.test.mjs tests/ui.test.mjs",
+    "test": "node --test tests/core.test.mjs tests/business-case.test.mjs tests/ui.test.mjs tests/robot.test.mjs tests/robot-ui.test.mjs",
     "benchmark": "node scripts/benchmark.mjs",
     "package-source": "python scripts/package_source.py",
     "check:public": "python scripts/check_public_files.py",
-    "proposal": "node scripts/business_case_sample.mjs && python scripts/build_proposal.py"
+    "proposal": "node scripts/business_case_sample.mjs && python scripts/build_proposal.py",
+    "benchmark:robot": "node scripts/robot_benchmark.mjs",
+    "benchmark:contact": "python -m scripts.robot_contact_benchmark"
   },
   "devDependencies": {
     "jsdom": "26.1.0"
   },
-  "description": "A business pilot proposal for adaptive transfer calibration, with a working physics model and scenario economics."
+  "description": "A task-specific robot physics lab that learns friction and mass from contact motion and counts the cost of learning."
 }

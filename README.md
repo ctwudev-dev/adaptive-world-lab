@@ -1,127 +1,110 @@
-# Adaptive Transfer Lab
+# Robot Physics Lab
 
-**A business pilot proposal for a material-transfer calibration assistant.**
+**Help robots learn how objects move, test actions in simulation, and improve from feedback.**
 
-This project asks whether a station can learn changing surface conditions well enough to reduce manual tuning and positioning exceptions - while paying for the time it spends learning.
+A virtual XY robot pushes a round object toward a target. It does not know the object's mass or the surface friction. It predicts a move, watches the contact and coast, updates its physics belief, and plans again.
 
-It combines a working physics prototype with an interactive business case, a pilot plan, and clear acceptance gates.
+The engineering question is: **When does learning the physics help, and when does an extra learning move cost more than it adds?**
 
-**Start here:** [decision proposal](docs/business-proposal.md) · [two-page brief](dist/transfer-pilot-proposal.pdf) · [technical evidence](docs/results.md)
+This is a working simulation prototype with a browser interface, an independent MuJoCo contact world, paired experiments, replay, exports, and explicit limits. Physics learning here means estimating two parameters in a known model.
 
-## The business problem
+## Try it
 
-A package or tote may stop short or overshoot after a transfer. Changing packaging or surface conditions may require a new release setting. Repeated adjustments and operator interventions can consume time and capacity.
-
-That is the use-case hypothesis. No customer baseline or production saving has been measured for this project.
-
-The proposed buyer is an Operations or Automation Engineering team responsible for one station. The pilot should compare this idea with mechanical guides, a stable fixed recipe, and simpler passive learning.
-
-## The proposal
-
-Approve baseline discovery and guarded bench tests for one station and a defined product family. Use six weeks as a planning window. Treat the sample $35k allowance as a placeholder to be re-estimated, not a quote or a request to deploy.
-
-The intended first equipment workflow is a recommendation for operator approval. The current release is an offline simulator and decision-support tool. It does not control production equipment.
-
-## What the working product shows
-
-| Part | What it lets a reviewer do |
-|---|---|
-| Business case | Change volume, exception rates, direct cost, extra time, support, and investment. |
-| Downside analysis | See when the assumed improvement misses the payback target or loses value. |
-| Station model | Inspect friction estimates, candidate moves, predictions, and model updates. |
-| Evidence | Compare four strategies across shared cases, including failures and probe cost. |
-| Pilot plan | Review ownership, measures, stop rules, and go/no-go gates. |
-| Export | Download the proposal, source, raw experiment data, and entered financial assumptions. |
-
-The interface labels what is built, what is assumed, and what still needs a real trial. A positive financial scenario never changes the deployment status to approved.
-
-## Try it locally
-
-You need Python to serve the static app. The browser app itself needs no API key or GPU.
+No API key or GPU is needed for the browser app.
 
 ~~~bash
 python -m http.server 8080 --directory dist
 ~~~
 
-Open [localhost:8080](http://localhost:8080). Start on **Business case**, try the **Less improvement** and **Worse outcome** scenarios, then inspect **Station model** and **Evidence**.
+Open [localhost:8080](http://localhost:8080).
 
-All calculations and exports run in the browser. The app does not upload entered business assumptions.
+1. Start with **The surface changes** and press **One move** to inspect each update.
+2. Compare **Active learning**, **Learn while moving**, and **Keep the starting model**.
+3. Load the **MuJoCo contact replay** to inspect a separate force-driven pusher simulation.
+4. Open **Compare**, then load saved contact tests or compute a new browser batch.
+5. Try **The model starts close**. More information is not always worth extra time.
 
-## Illustrative economics
+The scene shows a radial force-controlled pusher, a predicted stop range, and observed motion. The heatmap shows a joint belief over friction and mass. Hidden physics is available only through the evaluator toggle and exported evaluation records.
 
-The sample case assumes 1.2 million transfers per year, a change from 12 to 8 exceptions per 1,000, $12 per avoided exception, $5k in extra time cost, $6k in annual support, and $35k upfront.
+## What is built
 
-| Modeled output | Value |
-|---|---:|
-| Gross annual benefit | $57,600 |
-| Annual net benefit after time and support | $46,600 |
-| First-year net value after upfront cost | $11,600 |
-| Simple value payback | About 9.0 months |
+- Planar translation driven by bounded force pulses.
+- Joint friction and mass estimation from positions before the push, at release, and after settling.
+- A one-move planner with a declared information bonus for Active.
+- Fixed and Passive baselines with the same action space and starting prior.
+- A separate MuJoCo pusher with two force motors and solved object contact.
+- Three paired test suites, retained failures, time and probe costs, and Wilson success intervals.
+- A browser worker for new batches, local JSON exports, and recorded contact replay.
 
-**These are scenario calculations, not achieved savings or market benchmarks.** If the rate only improves to 10 per 1,000, modeled payback rises to about 23.6 months. With no improvement, ongoing costs lose $11,000 of value per year.
+## Recorded contact results
 
-Time saved is capacity, not cash, unless Finance confirms an avoided cost. The model does not turn simulation success percentages into production exception rates.
+Successful episodes out of 60:
 
-## Technical evidence
+| Test set | Fixed | Passive | Active |
+|---|---:|---:|---:|
+| Unseen mass and friction | 12 | 57 | 57 |
+| Friction changes after one move | 16 | 48 | 49 |
+| Starting model is close | 55 | 59 | 59 |
 
-The release retains 1,200 MuJoCo runs: three test sets, 100 cases each, and four strategies.
+These are **540 new MuJoCo episodes**: three suites, 60 cases, three strategies. Another 540 episodes use the browser model. The two engines share case definitions; noise is paired within each engine.
 
-| Successful simulated runs / 100 | Fixed | Passive | Active | Robust |
-|---|---:|---:|---:|---:|
-| Unknown fixed friction | 83 | 99 | 100 | 27 |
-| Friction changes | 65 | 90 | 89 | 48 |
-| Extra drag | 88 | 100 | 99 | 24 |
+Learning helped relative to the fixed starting belief. **Active did not consistently beat Passive.** In the unseen suite, both used 2.55 moves on average; Active took 3.222 seconds including setup, versus 3.189 for Passive. The one extra success under a friction change does not establish a reliable advantage.
 
-Active used 3.42 moves on average in the first set; Passive used 2.98. The extra 0.44 moves are a commercial trade-off. The pilot should establish when a separate probe is worth paying for.
+Active still crossed the table limit in 9/60 changed-friction cases. The risk penalty is not a physical safety guarantee. All failures remain in the data.
 
-No between-strategy significance test was run. Simulation success is not proof of production reliability or financial benefit. See [results and limitations](docs/results.md).
+See [full results and costs](docs/robot-results.md), [method and sources](docs/robot-method.md), and [validation](docs/verification.md).
 
-## Run the engineering checks
+## Run the checks and reproduce the work
 
-Python 3.10+ and Node.js 18+:
+Use Python 3.10 or later and Node.js 18 or later. The commands below use macOS or Linux activation syntax.
 
 ~~~bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -e '.[mujoco,test]'
 npm ci
+
 pytest -q
 npm test
+
+# Three numerical suites; all outcomes retained.
+npm run benchmark:robot -- 60 2048
+
+# Three independent contact suites and a complete replay.
+python -m scripts.robot_contact_benchmark --n 60 --seed 2048
+python scripts/robot_report.py
+
+# Build and check the portable source release.
+python scripts/package_source.py
+python scripts/check_release.py
 python scripts/check_public_files.py
 ~~~
 
-On Windows, activate with .venv\Scripts\activate. For full experiment reproduction, use requirements-repro.txt and python -m scripts.reproduce.
+The contact harness uses the same JavaScript controller through a JSON bridge. Only allowlisted configuration and position observations reach it. The Python world and its true physical values remain in the evaluator.
 
-The business release passed 64 local tests: 43 Python and 21 JavaScript checks. The two-page brief was rendered and visually reviewed. Live-browser layout review remains incomplete; see [verification notes](docs/verification.md).
-
-To rebuild the brief, install the optional proposal dependencies:
-
-~~~bash
-pip install -e '.[proposal]'
-npm run proposal
-python scripts/package_source.py
-python scripts/check_release.py
-~~~
-
-## Scope and next stage
-
-The station model is one-dimensional free sliding with known, exact release speed. It does not include a conveyor drive, jams, a robot arm, camera tracking, PLC integration, or physical safety enforcement.
-
-Before a live pilot, measure release speed, check model fit, and define an approved equipment envelope. Reject the idea if a simpler hardware or fixed-recipe change offers better value.
-
-## Project map
+## Code map
 
 | Path | Purpose |
 |---|---|
-| [docs/business-proposal.md](docs/business-proposal.md) | Decision request, economics, buyer, pilot, risks, and open commercial questions. |
-| [dist/business-case.js](dist/business-case.js) | Validated scenario calculations and assumption export. |
-| [dist/business.js](dist/business.js) | Business interface and saved-evidence summary. |
-| [awm](awm) | Independent Python controllers, simulator interfaces, and evaluation. |
-| [dist/engine.js](dist/engine.js) | Matching browser physics and control implementation. |
-| [tests](tests) | Physics, isolation, interface, business arithmetic, and downside checks. |
-| [docs/research-guide.md](docs/research-guide.md) | Original research overview and reproduction commands. |
-| [docs/verification.md](docs/verification.md) | Completed checks and remaining verification limits. |
+| [dist/robot-engine.js](dist/robot-engine.js) | Physics predictor, joint belief, action planner, numerical world |
+| [dist/robot-experiment.js](dist/robot-experiment.js) | Shared cases and paired summaries |
+| [awm/robot_contact.py](awm/robot_contact.py) | Independent actuated MuJoCo pusher and observation boundary |
+| [scripts/robot_bridge.mjs](scripts/robot_bridge.mjs) | Narrow JSON interface to the canonical controller |
+| [scripts/robot_contact_benchmark.py](scripts/robot_contact_benchmark.py) | Contact experiments and replay generation |
+| [dist/robot.js](dist/robot.js) | Interface, scene, belief view, replay, and worker controls |
+| [results](results) | Raw cases, outcomes, source hashes, and earlier research records |
+| [tests](tests) | Physics, hidden-state isolation, probe accounting, and interface checks |
 
-The repository name and Python package retain the original Adaptive World Lab identity. The proposal is the business-facing layer over that research core.
+## Scope and next evidence
 
-See [privacy notes](docs/privacy.md). Source files exclude personal contacts, local configuration, and hosting identifiers.
+The object is round, rotation is locked, and the pusher makes centered contact. Force calibration, friction family, geometry, and pusher mass are known. The model learns friction and mass; it does not infer arbitrary geometry or learn a foundation model from video.
+
+A simulated pusher is implemented. A physical robot, camera tracker, grasping system, or production deployment is not included. The next evidence step is measured force and object motion, split into calibration and held-out evaluation data. Parameter confidence and model-based boundary penalties need separate real-world validation.
+
+The product hypothesis is a physics adaptation module that could reduce robot retuning when objects or surfaces change. Customer demand, integration effort, and financial benefit remain unmeasured.
+
+The interface uses plain English and local calculations. See [privacy notes](docs/privacy.md). The repository name and the awm Python package retain the earlier project identity.
+
+## Earlier work
+
+The [transfer-station proposal](docs/transfer-guide.md) and [one-dimensional research guide](docs/research-guide.md) remain available as earlier studies. Their 1,200 recorded free-glide runs and illustrative business figures are separate from the robot contact results above.

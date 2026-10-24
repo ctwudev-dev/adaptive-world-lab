@@ -14,6 +14,8 @@ TOP_DIRS = {"awm", "tests", "scripts", "results", "dist", "docs", ".github"}
 EXCLUDED = {"__pycache__", ".pytest_cache", "node_modules"}
 
 shutil.copy2(ROOT / "README.md", ROOT / "dist/README.md")
+shutil.copy2(ROOT / "docs/robot-method.md", ROOT / "dist/robot-method.md")
+shutil.copy2(ROOT / "docs/robot-results.md", ROOT / "dist/robot-results.md")
 count = 0
 with ZipFile(DEST, "w", ZIP_DEFLATED, compresslevel=9) as archive:
     for path in sorted(ROOT.rglob("*")):

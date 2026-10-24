@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {Worker as NodeWorker} from 'node:worker_threads';
 import {JSDOM} from 'jsdom';
-const html=fs.readFileSync(new URL('../dist/index.html',import.meta.url),'utf8');
+const html=fs.readFileSync(new URL('../dist/transfer.html',import.meta.url),'utf8');
 const dom=new JSDOM(html,{url:'https://example.invalid/#lab',pretendToBeVisual:true});
 const liveTimers=new Set(),nativeTimeout=globalThis.setTimeout;
 globalThis.setTimeout=(fn,ms,...args)=>{const timer=nativeTimeout(fn,ms,...args);liveTimers.add(timer);return timer;};
